@@ -1,75 +1,66 @@
 # Context-aware UI
 
-**人間が読みやすく、使いやすく、内容が変わっても崩れないUIを作るための小さなAgent Skill。**
+A **small, practical Agent Skill** for readable, human-friendly interfaces that remain usable as content and layout change.
 
-利用者の目的・情報の優先順位・適切な温度感を考え、AI生成でありがちな画一的な装飾を避けます。日本語の改行、長い文字列、画面幅変更で崩れる場合は、文字を隠さず、**CSSなどのレイアウト制約そのものを修正**します。
+**What it emphasizes:** visual hierarchy, intentional visual character instead of generic AI-looking design, Japanese/CJK text handling, responsive layout, and fixing the **underlying CSS constraints** behind overlap, clipping, and overflow.
 
-Web専用ではありません。CSSの具体策はWebの場合だけ適用します。**追加のPython、Playwright、ライブラリは不要**です。
+The Skill is platform-agnostic. Its CSS guidance applies only when the project uses CSS. No Python, Playwright, or additional runtime dependencies are required.
 
-> 試用版です。Skillを使えば必ず美しいUIになるという効果は、まだ実証していません。
+## Why is SKILL.md written in English?
 
-## インストール（VS Code / Codex）
+The instructions use English for consistent technical terminology and concise agent-facing wording. **There is no verified guarantee that English instructions outperform Japanese instructions in Codex.** The `description` includes Japanese trigger terms, and the instructions explicitly preserve the user's language and require testing Japanese/CJK content. English instructions do **not** mean English UI labels.
 
-このリポジトリの**ルートがそのままSkill**です。複雑なセットアップは不要です。
+The Skill is intentionally just one `SKILL.md` file. Readability and actual results matter more than its language or file size.
 
-### Windows PowerShell：全プロジェクトで使用
+## Installation (VS Code / Codex)
+
+This repository's **root is the Skill folder**. You can clone it directly without copying files.
+
+**Windows PowerShell — user-wide:**
 
 ```powershell
 New-Item -ItemType Directory -Force "$HOME/.agents/skills" | Out-Null
 git clone https://github.com/ARTS-Night/context-aware-ui-skill.git "$HOME/.agents/skills/context-aware-ui"
 ```
 
-macOS / Linux:
+**macOS / Linux — user-wide:**
 
 ```bash
 mkdir -p ~/.agents/skills
 git clone https://github.com/ARTS-Night/context-aware-ui-skill.git ~/.agents/skills/context-aware-ui
 ```
 
-**更新はpullだけです。**
+**Update an existing Git clone:**
 
 ```powershell
 git -C "$HOME/.agents/skills/context-aware-ui" pull --ff-only
 ```
 
-初回のみcloneし、2回目からはpullしてください。古いZIPを手動配置した同名フォルダーがある場合は、先に別の場所へ退避してください。変更が認識されない場合はCodexセッションを再起動します。
+Clone once, then pull for updates. If you previously copied an older version manually, back up or remove that folder before cloning. Restart the Codex session if the changes are not detected.
 
-### そのプロジェクトだけで使用
+**Project-local:** run `git clone https://github.com/ARTS-Night/context-aware-ui-skill.git .agents/skills/context-aware-ui` from the project root, after creating `.agents/skills` if needed. If you need the version to be tracked by the parent repository and reproducible after pull, use a Git submodule rather than committing a nested clone.
 
-プロジェクトのルートで次を実行します。
+## Usage
 
-```powershell
-New-Item -ItemType Directory -Force ".agents/skills" | Out-Null
-git clone https://github.com/ARTS-Night/context-aware-ui-skill.git ".agents/skills/context-aware-ui"
-```
-
-親プロジェクトでもSkillのバージョンをGit管理して共有したい場合は、通常のcloneの代わりにsubmoduleを使います。
-
-```bash
-mkdir -p .agents/skills
-git submodule add https://github.com/ARTS-Night/context-aware-ui-skill.git .agents/skills/context-aware-ui
-git commit -m "Add Context-aware UI skill"
-```
-
-他のPCでは親リポジトリを取得・pullした後、`git submodule update --init --recursive` を実行すると記録済みのSkill版が配置されます。最新版へ進めるときは `git submodule update --remote .agents/skills/context-aware-ui` を実行して、親リポジトリに変更をcommitします。通常のcloneとsubmoduleを**同じフォルダーで混用しない**でください。
-
-## 使い方
-
-Codexで `$context-aware-ui` を選び、次のように依頼します。
+In Codex, mention `$context-aware-ui`:
 
 ```text
 $context-aware-ui
-この画面を、人が読みやすく自然に使えるUIに改善してください。
-日本語の長い文字列や画面サイズの変化でも崩れないようにし、
-CSSの幅・最小サイズ・折返し・配置を原因から修正してください。
-既存の機能とブランドを守り、意味のない装飾は増やさないでください。
+Improve this Japanese UI so it reads naturally and remains stable with long
+text, changing data, and narrow windows. Fix underlying CSS sizing, wrapping,
+or positioning problems instead of hiding overflow. Preserve the product's
+identity and existing functionality.
 ```
 
-新規UI制作でも、Web以外の画面でも利用できます。Skill本体は [SKILL.md](SKILL.md) の1ファイルのみです。
+## 日本語
 
-## English
+**人間にとって自然に見やすく、使いやすいUIを作るための最小限のSkill**です。英語を中心に書いていますが、日本語UIを英語化することはありません。
 
-A minimal, human-first Agent Skill for readable, intentional, resilient UI. It discourages generic AI-styled decoration and promotes fixing underlying layout constraints when Japanese or dynamic content wraps, clips, or overflows. Platform-agnostic; CSS guidance applies to web projects only.
+情報の優先順位・文字・余白・構図・温度感を考え、理由のないグラデーションや画一的なカードの多用を避けます。日本語の折り返し、長いURL、動的な文字数の変化で崩れた場合は、`overflow: hidden`で隠さず、Flex/Gridの幅・最小サイズ・固定高さなどの原因から修正します。
+
+既にインストールしてある場合は、上記の`git pull --ff-only`で更新できます。
+
+**注意:** これは試用版です。英語と日本語の指示文による性能差や、Skill導入による美観・使いやすさの改善は、まだ統制された実験で実証していません。
 
 ## License
 

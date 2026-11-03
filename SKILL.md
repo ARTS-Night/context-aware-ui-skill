@@ -1,34 +1,39 @@
 ---
 name: context-aware-ui
-description: Create, review, and improve human-friendly UI across platforms. Use for visual hierarchy, avoiding generic AI-looking designs, Japanese or dynamic text wrapping, responsive layouts, CSS overflow and alignment bugs, and interaction clarity. Do not invoke for backend-only work.
+description: Design and improve readable, distinctive, resilient UI. Use for visual hierarchy, avoiding generic AI-looking designs, responsive layouts, Japanese/CJK text wrapping, CSS clipping, overflow, and alignment bugs (日本語の折り返し・ずれ・はみ出し・見やすいUI). Not for backend-only work.
 ---
 
 # Context-aware UI
 
-**目的：人が自然に読み、理解し、操作できるUIを作る。** 見た目の個性と実用性を両立し、内容や画面が変わっても崩れないようにする。Web専用ではない。対象環境の慣習・技術・既存デザインを優先する。
+Create interfaces that people can **read, understand, and use naturally**. Keep the user's scope, brand, architecture, and content language. This Skill is platform-agnostic; apply CSS guidance only to CSS-based interfaces.
 
-## 設計するとき
+## Design intentionally
 
-1. **誰が何をしたいかを先に考える。** 主な作業、最優先情報、利用頻度、誤操作の影響を確認する。指定済みの好みやブランドを勝手に変更しない。
-2. **見やすい構成を積極的に作る。** 情報のまとまり・強弱・整列・余白・文字の階層・色の役割を整理する。画面の主役を明確にし、単調な均一配置だけで済ませない。使う場面に合う温度感と個性を持たせる。
-3. **「AIっぽい」テンプレートに逃げない。** 理由のない青紫グラデーション、発光、巨大なヒーロー、過剰なカードや余白、薄すぎる文字を機械的に足さない。ただし**禁止はしない**。目的がある装飾は使い、無理に地味にもしない。
-4. **実際の内容で考える。** 日本語、英数字混在、長い名称・URL、空データ、読み込み中、失敗、件数変化などを想定する。ダミーの短文だけで見た目を完成扱いしない。
-5. **動作もUI品質に含める。** 押せないボタン、事実と異なる進捗率、反応のない操作を残さない。重大・不可逆な操作は対象、結果、復旧方法を分かりやすくする。
+1. Understand the main task, audience, content, usage frequency, input method, and risks. For a small fix, avoid unrelated redesigns.
+2. Build clear hierarchy through grouping, alignment, typography, spacing, contrast, and a deliberate focal point. Give the interface an appropriate tone and distinct character; do not confuse "minimal" with "bland."
+3. Avoid default AI-looking decoration: arbitrary blue-purple gradients, glow, glass effects, oversized hero sections, repetitive cards, excessive whitespace, and faint text. **These are not bans**; use any of them when they serve the product.
+4. Keep interactions and content truthful: no dead controls, fake metrics presented as real, unclear feedback, or unprotected destructive actions.
 
-## レイアウトが崩れたら「隠す」より原因を直す
+## Design for changing content
 
-- 文字の欠け・意図しない改行・重なり・横はみ出しを見つけたら、**親子の幅制約、最小サイズ、折返し、固定高さ、配置方法**を順に調べる。表示内容を削ったり、画面全体に `overflow: hidden` を掛けてごまかさない。
-- **Web/CSSの場合:** 通常の配置はFlex/Gridなどの自然なフローを活用する。内容量が変わる箇所への固定高さ・絶対配置・一律 `white-space: nowrap` は慎重に使う。
-- Flex/Gridで子要素が縮まないなら自動最小幅を疑い、**必要な要素に** `min-width: 0`、Grid列なら `minmax(0, 1fr)` などを検討する。全要素に無条件で適用しない。
-- 日本語は自然な折返しを基本にする。URL・長い識別子など分割しにくい文字列には、状況に応じて `overflow-wrap: anywhere` を使う。 `word-break: break-all`、省略記号、`overflow: hidden` は意図した表示契約があるときだけ使い、重要情報を失わせない。
-- 1行に収めるか、折り返すか、短いラベルにするか、再配置するか、**部品ごとに選ぶ**。表・コードなど横スクロールが必要な場合は、その領域に限定する。
-- Web以外では、同じ原理を対象のレイアウト・テキスト計測・入力方式へ翻訳する。CSSの書き方を他の環境に強制しない。
+- Test realistic **Japanese/CJK and mixed-language text**, long labels, URLs, filenames, changing data, empty/loading/error states, and narrow or enlarged displays.
+- Decide **per component** whether to wrap, reflow, scroll within the region, or truncate. Natural wrapping is fine; clipping, overlap, and lost information are not.
+- When something breaks, **fix the layout constraint, not the symptom**. Inspect parent/child widths, minimum sizes, fixed heights, positioning, and text wrapping. Do not hide page-wide overflow as a quick fix.
 
-## 仕上げに確認する
+### For CSS layouts
 
-- **見た目:** 何が重要か一目で分かるか。文字の対比、密度、統一感、個性は適切か。AIの既製テンプレート風になっていないか。
-- **変化への強さ:** 日本語の長文、英数字混在、短文、空/エラー、フォント差、画面・ウィンドウの幅変更、文字拡大で欠けたり、重なったりしないか。Webでは狭い幅やズーム時の**ページ全体の意図しない横スクロール**も確認する。
-- **操作:** マウス/タッチ/キーボード等、フォーカス、状態変化、失敗時の回復、情報の正しさを確認する。装飾の良さで操作不能を相殺しない。
-- **検証の正直さ:** 利用可能な環境で実際に確認する。コード確認だけなら描画やユーザー体験まで保証せず、未検証を明記する。特定の言語・ツールの導入を必須にしない。
+- Prefer content-aware Flex/Grid flow over unnecessary fixed heights, absolute positioning, or blanket `white-space: nowrap`.
+- For Flex/Grid items that cannot shrink, consider **targeted** `min-width: 0` / `min-inline-size: 0`; for Grid tracks, `minmax(0, 1fr)`. Do not apply them universally.
+- Let Japanese wrap naturally. Use `overflow-wrap: anywhere` when needed for unbreakable URLs or identifiers; avoid indiscriminate `word-break: break-all`.
+- Reserve ellipsis, clipping, and horizontal scrolling for components where they are intentional and important information remains available. Keep table/code scrolling inside that region, not across the page.
 
-小さな修正は問題の箇所だけ直す。大きな新規設計では必要に応じて構成案を比べる。返答は**何を・なぜ直したか、何を確認したか**を簡潔に伝える。
+Use equivalent layout and text-sizing mechanisms for desktop, mobile, games, VR, or other platforms. Never force Web-specific rules onto them.
+
+## Check and report
+
+- **Appearance:** hierarchy, legibility, appropriate density/tone, visual identity, and applicable contrast/accessibility requirements.
+- **Robustness:** long Japanese text, mixed scripts, different widths, text enlargement, and changing states without clipping, overlap, or unintended page overflow.
+- **Behavior:** working controls, input/focus, feedback, correct status/metrics, recovery, and safe irreversible actions.
+- Use tools already available in the project; do **not** require Python, Playwright, or new dependencies. State what was actually checked and what remains unverified.
+
+**Use the user's requested language for UI copy and replies.** English instructions do not mean English UI text. Keep fixes proportional and report the key change and verification briefly.
